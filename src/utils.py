@@ -1,4 +1,3 @@
-import sys
 import ffmpeg
 import os
 import json
