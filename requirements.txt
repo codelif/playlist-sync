@@ -1,0 +1,4 @@
+google-api-python-client
+youtube_title_parse
+ffmpeg-python
+yt-dlp
