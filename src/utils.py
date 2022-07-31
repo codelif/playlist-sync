@@ -32,6 +32,23 @@ def fetch_sync_file(path: str) -> dict:
         return json.load(f)
 
 
+def playlist_file(path: str) -> list[str]:
+    playlists = []
+    if os.path.exists(path):
+        with open(path) as f:
+            for line in f.readlines():
+                if "#" not in line:
+                    playlists.append(line.strip())
+    else:
+        print("ERROR: Playlist File not found. Please create a playlist file at '%s' and enter the playlist IDs to sync." % path)
+        exit(1)
+
+    if len(playlists) == 0:
+        print("ERROR: Playlist File is empty. Enter a playlist ID in playlist file at '%s' to continue." % path)
+        exit(1)
+    
+    return playlists
+
 
 def update_sync_file(obj: dict, path: str):
     with open(path, "w+") as f:

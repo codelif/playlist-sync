@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import yt_dlp as youtube_dl
 import os
 
+
 class MyLogger(object):
     def debug(self, msg):
         pass
@@ -42,7 +43,13 @@ def downloader(videos, playlist, output_folder):
             'progress_hooks': [my_hook],
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([video['id']])
+            try:
+                ydl.download([video['id']])
+            except youtube_dl.utils.ExtractorError as e: # skip if this error is raised. It is usually raised when the video has DRM or not available in your country.
+                print("Error occured while trying to download '%s'. Skipping..." % f"https://youtu.be/{video['id']}")
+                continue
+                
+            
 
             
 if __name__ == "__main__":

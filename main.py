@@ -6,6 +6,8 @@ import argparse
 import sys
 import os
 
+
+# Argument Parsing
 parser = argparse.ArgumentParser(description="Sync youtube playlist with local machine.")
 parser.add_argument("--output-folder", "-o", metavar="PATH", type=str)
 argv = parser.parse_args()
@@ -13,29 +15,15 @@ argv = parser.parse_args()
 folder = ""
 if argv.output_folder:
     folder = os.path.expanduser(argv.output_folder)
-    ensure_folder(folder)
 
+# Config location
 MUSIC_DIRECTORY = folder or os.path.expanduser("~/Music")
 PLAYLIST_FILE = os.path.expanduser("~/.ypsync/yplaylists")
 SYNC_FILE = os.path.expanduser("~/.ypsync/sync_status.json")
+ensure_folder(MUSIC_DIRECTORY) # Create MUSIC_DIRECTORY if it does not exists
 
 
-def playlist_file() -> list[str]:
-    playlists = []
-    if os.path.exists(PLAYLIST_FILE):
-        with open(PLAYLIST_FILE) as f:
-            for line in f.readlines():
-                if "#" not in line:
-                    playlists.append(line.strip())
-    else:
-        print("ERROR: Playlist File not found. Please create a playlist file at '%s' and enter the playlist IDs to sync." % PLAYLIST_FILE)
-        sys.exit()
 
-    if len(playlists) == 0:
-        print("ERROR: Playlist File is empty. Enter a playlist ID in playlist file at '%s' to continue." % PLAYLIST_FILE)
-        sys.exit()
-    
-    return playlists
 
 
 def is_present(playlist_title:str) -> bool:
@@ -101,8 +89,5 @@ def main():
         
 
     update_sync_file(sync_prev, SYNC_FILE)
-    
-
-
     
 main()

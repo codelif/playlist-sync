@@ -2,6 +2,7 @@ import os
 import googleapiclient.discovery
 from youtube_title_parse import get_artist_title as extract
 
+
 def fetch_songs(playlist_id:str) -> dict:
     api_service_name = "youtube"
     api_version = "v3"
@@ -25,6 +26,8 @@ def fetch_songs(playlist_id:str) -> dict:
         
         # collecting relevant information in a dictionary and appending it in the playlist list
         for i in (response["items"]):
+            if i['snippet']['title'].lower() in ["private video", "deleted video"]: # Check for private/deleted videos
+                continue 
             try:
                 # Parse the title to extract only the artist and title.
                 artist, title = extract(i['snippet']['title'])
@@ -44,6 +47,7 @@ def fetch_songs(playlist_id:str) -> dict:
         request = playlist_items_api.list_next(request, response)
 
     return playlist
+
 
 def fetch_playlist(playlist_IDs: list) -> list[dict]:
     api_service_name = "youtube"
@@ -80,8 +84,3 @@ def fetch_playlist(playlist_IDs: list) -> list[dict]:
 
     return playlists
 
-if __name__ == "__main__":
-    import json
-    playlist = fetch_playlist(["PLrG0epTyFPvwhxV_bLL3OfJ1XvpWQUxP4", "PLrG0epTyFPvyJw_a-cFu3Xxp9ertchISl"])
-
-    print(json.dumps(playlist))

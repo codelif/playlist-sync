@@ -164,3 +164,4 @@ cython_debug/
 result.json
 result.txt
 *.mp3
+.vscode/
