@@ -2,8 +2,20 @@ import ffmpeg
 import os
 import json
 
+
 def get_video_id(media_file: str) -> str:
     return ffmpeg.probe(media_file)['format']['tags']['purl'].split("=")[-1]
+
+
+def ensure_folder(path: str):
+    if os.path.exists(path):
+        if not os.path.isdir(path):
+            print("Given path is not a directory")
+            exit(1)
+        return
+    else:
+        os.mkdir(path)
+
 
 def ensure_sync_file(path: str):
     if not os.path.exists(path):

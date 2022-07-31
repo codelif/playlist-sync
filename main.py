@@ -1,11 +1,21 @@
-from src.utils import ensure_sync_file, fetch_sync_file, get_video_id, update_sync_file
+from src.utils import ensure_folder, ensure_sync_file, fetch_sync_file, get_video_id, update_sync_file
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
 from datetime import datetime
+import argparse
 import sys
 import os
 
-MUSIC_DIRECTORY = os.path.expanduser("~/Music")
+parser = argparse.ArgumentParser(description="Sync youtube playlist with local machine.")
+parser.add_argument("--output-folder", "-o", metavar="PATH", type=str)
+argv = parser.parse_args()
+
+folder = ""
+if argv.output_folder:
+    folder = os.path.expanduser(argv.output_folder)
+    ensure_folder(folder)
+
+MUSIC_DIRECTORY = folder or os.path.expanduser("~/Music")
 PLAYLIST_FILE = os.path.expanduser("~/.ypsync/yplaylists")
 SYNC_FILE = os.path.expanduser("~/.ypsync/sync_status.json")
 
@@ -75,16 +85,16 @@ def main():
     sync_prev = fetch_sync_file(SYNC_FILE)
 
     for playlist in playlists:
-        if playlist['id'] in list(sync_prev.keys()):
+        if playlist['id'] in list(sync_prev.keys()) and os.path.exists(os.path.join(MUSIC_DIRECTORY, f"{playlist['title']} (Youtube)")):
             # update
-            print("The playlist %s has been previously synced. Detecting changes..." % playlist["title"])
+            print("The playlist '%s' has been previously synced. Detecting changes..." % playlist["title"])
             update(playlist)
             sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")}
         else:
             # create
-            print("The playlist %s has not been previously synced. Syncing..." % playlist["title"])
+            print("The playlist '%s' has not been previously synced. Syncing..." % playlist["title"])
             videos = fetch_songs(playlist["id"])
-            sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")} # To start from where we left instead of starting over in case of a interuption.
+            sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")} # To start from where it crashed instead of starting over in case of a interuption.
             update_sync_file(sync_prev, SYNC_FILE)
             downloader(videos, playlist['title'], MUSIC_DIRECTORY)
         
