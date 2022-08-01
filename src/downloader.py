@@ -28,7 +28,7 @@ def downloader(videos, playlist, output_folder):
             'writethumbnail': True,
             'format': 'bestaudio/best',
             'outtmpl': f'{playlist} (Youtube)/{video["title"]} - {video["artist"]}.%(ext)s',
-            'paths': {'temp':'/tmp', 'home': output_folder},
+            'paths': {'temp':'~/.tmp', 'home': output_folder},
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
