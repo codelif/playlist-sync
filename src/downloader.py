@@ -45,14 +45,14 @@ def downloader(videos, playlist, output_folder):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download([video['id']])
-            except youtube_dl.utils.ExtractorError as e: # skip if this error is raised. It is usually raised when the video has DRM or not available in your country.
+            except (youtube_dl.utils.ExtractorError, youtube_dl.utils.DownloadError) as e: # skip if this error is raised. It is usually raised when the video has DRM or not available in your country.
                 print("Error occured while trying to download '%s'. Skipping..." % f"https://youtu.be/{video['id']}")
                 continue
                 
             
 
             
-if __name__ == "__main__":
+if __name__ == "__main__": # Debugging
     from fetch import fetch_playlist, fetch_songs
 
     playlist = fetch_playlist(["PLrG0epTyFPvyJw_a-cFu3Xxp9ertchISl"])
