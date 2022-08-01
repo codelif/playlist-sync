@@ -37,7 +37,7 @@ def fetch_songs(playlist_id:str) -> dict:
             
             video = {
                 'id':  i['contentDetails']['videoId'],
-                'title': title,
+                'title': title.replace("/", "-"), # special case
                 'artist': artist.replace(" - Topic", ""), # special case
                 'index': (i['snippet']['position']+1)
             }
