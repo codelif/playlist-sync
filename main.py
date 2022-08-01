@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from src.utils import ensure_folder, ensure_sync_file, fetch_sync_file, get_video_id, update_sync_file
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
