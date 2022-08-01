@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from src.utils import ensure_folder, ensure_sync_file, fetch_sync_file, get_video_id, update_sync_file, playlist_file
+from src.utils import *
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
 from datetime import datetime
@@ -22,10 +22,8 @@ if argv.output_folder:
 MUSIC_DIRECTORY = folder or os.path.expanduser("~/Music")
 PLAYLIST_FILE = os.path.expanduser("~/.ypsync/yplaylists")
 SYNC_FILE = os.path.expanduser("~/.ypsync/sync_status.json")
+DEVELOPER_KEY = os.environ["YOUTUBE_TOKEN"] # You can replace this with your key
 ensure_folder(MUSIC_DIRECTORY) # Create MUSIC_DIRECTORY if it does not exists
-
-
-
 
 
 def is_present(playlist_title:str) -> bool:
@@ -37,7 +35,7 @@ def update(playlist: dict):
     playlist_folder = os.path.join(MUSIC_DIRECTORY, f"{playlist['title']} (Youtube)")
     
     local_songs = [os.path.join(playlist_folder, video) for video in os.listdir(playlist_folder)]
-    global_songs = fetch_songs(playlist["id"])
+    global_songs = fetch_songs(playlist["id"], DEVELOPER_KEY)
     
     local_song_IDs = {get_video_id(song) for song in local_songs}
     global_song_IDS = {video['id'] for video in global_songs}
@@ -69,7 +67,7 @@ def update(playlist: dict):
 
 
 def main():
-    playlists = fetch_playlist(playlist_file(PLAYLIST_FILE))
+    playlists = fetch_playlist(playlist_file(PLAYLIST_FILE), DEVELOPER_KEY)
 
     ensure_sync_file(SYNC_FILE)
     sync_prev = fetch_sync_file(SYNC_FILE)
@@ -83,7 +81,7 @@ def main():
         else:
             # create
             print("The playlist '%s' has not been previously synced. Syncing..." % playlist["title"])
-            videos = fetch_songs(playlist["id"])
+            videos = fetch_songs(playlist["id"], DEVELOPER_KEY)
             sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")} # To start from where it crashed instead of starting over in case of a interuption.
             update_sync_file(sync_prev, SYNC_FILE)
             downloader(videos, playlist['title'], MUSIC_DIRECTORY)

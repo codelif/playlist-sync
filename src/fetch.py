@@ -3,13 +3,12 @@ import googleapiclient.discovery
 from youtube_title_parse import get_artist_title as extract
 
 
-def fetch_songs(playlist_id:str) -> dict:
+def fetch_songs(playlist_id:str, dev_key:str) -> dict:
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = os.environ["YOUTUBE_TOKEN"] # fetch api key from environment variable. You can substitute this with your api key if you are running this locally. To get yours visit: https://developers.google.com/youtube/v3/getting-started#before-you-start. It's free for 10,000 request per month. And you can get one without credit card.
 
     youtube = googleapiclient.discovery.build(
-        api_service_name, api_version, developerKey = DEVELOPER_KEY)
+        api_service_name, api_version, developerKey = dev_key)
 
     playlist_items_api = youtube.playlistItems()
     request = playlist_items_api.list(
@@ -49,13 +48,12 @@ def fetch_songs(playlist_id:str) -> dict:
     return playlist
 
 
-def fetch_playlist(playlist_IDs: list) -> list[dict]:
+def fetch_playlist(playlist_IDs: list, dev_key:str) -> list[dict]:
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = os.environ["YOUTUBE_TOKEN"] # fetch api key from environment variable. You can substitute this with your api key if you are running this locally. To get yours visit: https://developers.google.com/youtube/v3/getting-started#before-you-start. It's free for 10,000 request per month. And you can get one without credit card.
 
     youtube = googleapiclient.discovery.build(
-        api_service_name, api_version, developerKey = DEVELOPER_KEY)
+        api_service_name, api_version, developerKey = dev_key)
    
     playlist_api = youtube.playlists()
     request = playlist_api.list(

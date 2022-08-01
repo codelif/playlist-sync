@@ -49,14 +49,3 @@ def downloader(videos, playlist, output_folder):
                 print("Error occured while trying to download '%s'. Skipping..." % f"https://youtu.be/{video['id']}")
                 continue
                 
-            
-
-            
-if __name__ == "__main__": # Debugging
-    from fetch import fetch_playlist, fetch_songs
-
-    playlist = fetch_playlist(["PLrG0epTyFPvyJw_a-cFu3Xxp9ertchISl"])
-    videos = fetch_songs(playlist[0]["id"])
-
-    downloader(videos, playlist[0]["title"], "~/Music_Test")
-
