@@ -7,5 +7,5 @@ mkdir -p $LOCAL
 echo -e $LAUNCHER > $LOCAL/ypsync
 chmod +x $LOCAL/ypsync
 mkdir -p ~/.ypsync
-echo -e "ypsync successfully installed. Next steps:\n\t1. Add playlists in '~/.ypsync/yplaylists' to start syncing. \n\t2. Add API key in environment variable 'YOUTUBE_TOKEN' or edit ypsync.py and hardcode it.\n\t3. If you ever move the folder where this script resides then you have to re-run this script."
+echo -e "ypsync successfully installed. Next steps:\n\t1. Make sure ~/.local/bin is in PATH environment variable.\n\t2. Add playlists in '~/.ypsync/yplaylists' to start syncing. \n\t3. Add API key in environment variable 'YOUTUBE_TOKEN' or edit ypsync.py and hardcode it.\n\t4. If you ever move the folder where this script resides then you have to re-run this script."
 
