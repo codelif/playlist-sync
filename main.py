@@ -64,7 +64,7 @@ def update(playlist: dict):
             if song['id'] in list(added):
                 videos.append(song)
         
-        downloader(videos, playlist['title'], MUSIC_DIRECTORY)
+        downloader(videos, playlist, MUSIC_DIRECTORY)
 
 
 def main():
@@ -89,8 +89,11 @@ def main():
             videos = fetch_songs(playlist["id"], DEVELOPER_KEY)
             sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")} # To start from where it crashed instead of starting over in case of a interuption.
             update_sync_file(sync_prev, SYNC_FILE)
-            downloader(videos, playlist['title'], MUSIC_DIRECTORY)
+            downloader(videos, playlist, MUSIC_DIRECTORY)
         
     update_sync_file(sync_prev, SYNC_FILE)
-    
-main()
+
+    return 0
+
+if __name__ == "__main__":
+    main()
