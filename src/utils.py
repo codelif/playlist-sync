@@ -1,5 +1,6 @@
 import ffmpeg
 import os
+import shutil
 import json
 
 
@@ -52,7 +53,11 @@ def playlist_file(path: str) -> list[str]:
 
 def update_sync_file(obj: dict, path: str):
     with open(path, "w+") as f:
-        json.dump(obj, f)
+        json.dump(obj, f, sort_keys=True, indent=4)
 
 
-
+def delete_playlist(music_dir: str, playlist_title: str):
+    try:
+        shutil.rmtree(os.path.join(music_dir, f"{playlist_title} (Youtube)")) # try deleting playlist
+    except FileNotFoundError:
+        pass # playlist does not exist

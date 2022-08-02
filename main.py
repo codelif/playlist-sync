@@ -11,7 +11,8 @@ import os
 
 # Argument Parsing
 parser = argparse.ArgumentParser(description="Sync youtube playlist with local machine.")
-parser.add_argument("--output-folder", "-o", metavar="PATH", type=str)
+parser.add_argument("-o", "--output-folder", metavar="PATH", type=str, help="Override default or config output folder")
+parser.add_argument("-f", "--force-update", action="store_true", help="Force Redownload the entire playlist.")
 argv = parser.parse_args()
 
 folder = ""
@@ -73,21 +74,23 @@ def main():
     sync_prev = fetch_sync_file(SYNC_FILE)
 
     for playlist in playlists:
-        if playlist['id'] in list(sync_prev.keys()) and os.path.exists(os.path.join(MUSIC_DIRECTORY, f"{playlist['title']} (Youtube)")):
+        if playlist['id'] in list(sync_prev.keys()) and os.path.exists(os.path.join(MUSIC_DIRECTORY, f"{playlist['title']} (Youtube)")) and not argv.force_update:
             # update
             print("The playlist '%s' has been previously synced. Detecting changes..." % playlist["title"])
             update(playlist)
             sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")}
         else:
             # create
-            print("The playlist '%s' has not been previously synced. Syncing..." % playlist["title"])
+            delete_playlist(MUSIC_DIRECTORY, playlist['title']) # remove already existing folder incase
+            if argv.force_update:
+                print("Redownloading playlist '%s'.." % playlist['title'])
+            else:
+                print("The playlist '%s' has not been previously synced. Syncing..." % playlist["title"])
             videos = fetch_songs(playlist["id"], DEVELOPER_KEY)
             sync_prev[playlist["id"]] = {"lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")} # To start from where it crashed instead of starting over in case of a interuption.
             update_sync_file(sync_prev, SYNC_FILE)
             downloader(videos, playlist['title'], MUSIC_DIRECTORY)
         
-        
-
     update_sync_file(sync_prev, SYNC_FILE)
     
 main()
