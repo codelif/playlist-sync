@@ -3,6 +3,7 @@
 from src.utils import *
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
+from src.config import validate_config, get_api_key, get_playlists
 from datetime import datetime
 import argparse
 import sys
@@ -22,12 +23,19 @@ folder = ""
 if argv.output_folder:
     folder = os.path.expanduser(argv.output_folder)
 
+
 # Config location
 MUSIC_DIRECTORY = folder or os.path.expanduser("~/Music")
-PLAYLIST_FILE = os.path.expanduser("~/.ypsync/yplaylists")
-SYNC_FILE = os.path.expanduser("~/.ypsync/sync_status.json")
-DEVELOPER_KEY = os.environ["YOUTUBE_TOKEN"] # You can replace this with your key
-ensure_folder(MUSIC_DIRECTORY)  # Create MUSIC_DIRECTORY if it does not exists
+CONFIG_DIRECTORY = os.path.expanduser("~/.config/ypsync")
+CONFIG_FILE = os.path.join(CONFIG_DIRECTORY, "config.ini")
+SYNC_FILE = os.path.join(CONFIG_DIRECTORY, "sync_status.json")
+ensure_folder(CONFIG_DIRECTORY)
+# Config Extraction
+CONFIG = validate_config(CONFIG_FILE)
+DEVELOPER_KEY = get_api_key(CONFIG)
+PLAYLISTS = get_playlists(CONFIG)
+# Create MUSIC_DIRECTORY if it does not exists
+ensure_folder(MUSIC_DIRECTORY)
 
 
 def is_present(playlist_title: str) -> bool:
@@ -74,7 +82,7 @@ def update(playlist: dict):
 
 
 def main():
-    playlists = fetch_playlist(playlist_file(PLAYLIST_FILE), DEVELOPER_KEY)
+    playlists = fetch_playlist(PLAYLISTS, DEVELOPER_KEY)
 
     ensure_sync_file(SYNC_FILE)
     sync_prev = fetch_sync_file(SYNC_FILE)

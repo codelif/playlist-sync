@@ -26,7 +26,7 @@ def ensure_sync_file(path: str):
             print("Folder exists already. Creating File..")
         finally:
             with open(path, "w+") as f:
-                f.write("{}")
+                f.write("{\"app\":\"ypsync\"}\n")
 
 def fetch_sync_file(path: str) -> dict:
     with open(path) as f:
