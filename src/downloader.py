@@ -1,5 +1,5 @@
 """
-src/downloader.py - Downloader and Converter upstream YouTube media.
+src/downloader.py - Downloads and Converts upstream YouTube media.
 
 Copyright (C) 2022  Harsh Sharma  <goharsh007@gmail.com>
 
