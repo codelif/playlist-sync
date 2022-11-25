@@ -22,6 +22,7 @@ import ffmpeg
 import os
 import shutil
 import json
+import datetime
 
 
 def get_video_id(media_file: str) -> str:
@@ -81,3 +82,14 @@ def delete_playlist(music_dir: str, playlist_title: str):
         shutil.rmtree(os.path.join(music_dir, f"{playlist_title} (Youtube)")) # try deleting playlist
     except FileNotFoundError:
         pass # playlist does not exist
+
+
+def dprint(obj):
+    # stands for debug print. prints the obj and its type to the terminal.
+    
+    print(obj, type(obj), sep=" - ")
+
+
+def log_string(prefix="", suffix=""):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    return f"{prefix}{timestamp}{suffix}"

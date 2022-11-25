@@ -22,6 +22,7 @@ from src.utils import *
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
 from src.config import validate_config, get_api_key, get_playlists
+from src.mpd_hot_reload import get_client, hotreload_mpd
 from datetime import datetime
 import argparse
 import sys
@@ -128,8 +129,10 @@ def main():
                 "lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")}
             update_sync_file(sync_prev, SYNC_FILE)
             downloader(videos, playlist, MUSIC_DIRECTORY)
+        print()
 
     update_sync_file(sync_prev, SYNC_FILE)
+    hotreload_mpd(get_client())
 
     return 0
 

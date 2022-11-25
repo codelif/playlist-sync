@@ -17,3 +17,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
+
+from mpd import MPDClient
+
+
+def get_client() -> MPDClient:
+    client = MPDClient()
+    client.connect("localhost", 6600)
+    
+    return client
+
+
+def hotreload_mpd(client: MPDClient):
+    # save current settings in buffer.
+    status = client.status()
+    curr = client.currentsong()
+    
+    # analyse MPD settings to take the appropriate route.
+    
+    playlist, song = curr["file"].split("/")
+    
+    
+    client.update()
+    client.clear()
+    client.add(playlist)
+    
+    index = 0 
+    for i,v in enumerate(client.playlist()):
+        if song in v:
+            index = i
+
+    client.play()
+    if status["state"] == 'pause':
+        client.pause()
+                            #remove buffer from exact value.
+    client.seek(index, round(float(status['elapsed']) - 0.25, 3)) # 
+    
+    print("Updated MPD! Could you tell?")
+    
+
+if __name__ == "__main__":
+    hotreload_mpd(get_client())
+    
