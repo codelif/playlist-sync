@@ -51,8 +51,6 @@ def validate_config(path:str):
         for playlist in playlists:
             index = int(playlist[0].split('-')[-1])
             play_id = playlist[1]
-            if len(play_id) != 34:
-                raise InvalidPlaylist("Not 34-characters in length")
             p.update({index:play_id})
         if len(set(p.values())) != len(p.values()):
             print("WARN: Some of the playlists in config.ini are duplicates. Please ensure there are no duplicates.")

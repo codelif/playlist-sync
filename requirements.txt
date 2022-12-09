@@ -3,3 +3,4 @@ youtube_title_parse
 ffmpeg-python
 yt-dlp
 mutagen
+python-mpd2
