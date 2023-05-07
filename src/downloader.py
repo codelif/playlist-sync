@@ -44,8 +44,7 @@ def update_metadata(media_file: str, title: str, artist: str):
 
 def my_hook(d):
     if d['status'] == 'downloading':
-        # print(os.path.getsize(file_name)/1024+'KB / '+size+' KB downloaded!', end='\r')
-        print ("downloading "  + str(round(float(d['downloaded_bytes'])/float(d['total_bytes'])*100,1))+"%", end='\r')
+        print ("downloading "  + str(round(float(d['downloaded_bytes'])/float(d['total_bytes_estimate'])*100,1))+"%", end='\r')
     if d['status'] == 'finished':
         print('Downloaded \'%s\', converting ...' % os.path.basename(d['filename']))
 
