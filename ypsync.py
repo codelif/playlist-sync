@@ -132,7 +132,11 @@ def main():
         print()
 
     update_sync_file(sync_prev, SYNC_FILE)
-    hotreload_mpd(get_client())
+
+    try:
+        hotreload_mpd(get_client())
+    except ConnectionRefusedError:
+        pass
 
     return 0
 
