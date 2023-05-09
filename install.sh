@@ -9,5 +9,5 @@ chmod +x $LOCAL/ypsync
 mkdir -p ~/.config/ypsync
 echo "Installing requirements... (requires pip)"
 pip install -r $DIRECTORY/requirements.txt
-echo -e "\n\nypsync successfully installed. Please ensure ffmpeg is installed for youtube-dl to work. \n\tNext steps:\n\t1. Make sure ~/.local/bin is in PATH environment variable.\n\t2. Add playlists and API key in '~/.config/ypsync/config.ini' to start syncing.\n\t4. If you ever move the folder where this script resides then you have to re-run this script."
+echo -e "\n\nypsync successfully installed. Please ensure ffmpeg is installed for youtube-dl to work. \n\tNext steps:\n\t1. Make sure ~/.local/bin is in PATH environment variable.\n\t2. Add playlists in '~/.config/ypsync/config.ini' to start syncing.\n\t4. If you ever move the folder where this script resides then you have to re-run this script."
 

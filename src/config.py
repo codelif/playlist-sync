@@ -30,11 +30,6 @@ def validate_config(path:str):
     buffer.read(path)
     
     config = {}
-    try:
-        config.update({"key": buffer.get('settings', 'api-key')})
-    except (NoOptionError, NoSectionError):
-        print("ERROR: No API Key in config.ini. Please provide a Youtube API Key in config.ini. For more info: Read the DOCS on how to setup ypsync.")
-        exit()
     
     p = {}
     try:
@@ -75,9 +70,6 @@ def validate_config(path:str):
     
     return config
 
-
-def get_api_key(config: dict):
-    return config["key"]
 
 def get_playlists(config:dict):
     return list(config["playlists"].values())

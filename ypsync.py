@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from src.utils import *
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
-from src.config import validate_config, get_api_key, get_playlists
+from src.config import validate_config, get_playlists
 from src.mpd_hot_reload import get_client, hotreload_mpd
 from datetime import datetime
 import argparse
@@ -51,7 +51,6 @@ SYNC_FILE = os.path.join(CONFIG_DIRECTORY, "sync_status.json")
 ensure_folder(CONFIG_DIRECTORY)
 # Config Extraction
 CONFIG = validate_config(CONFIG_FILE)
-DEVELOPER_KEY = get_api_key(CONFIG)
 PLAYLISTS = get_playlists(CONFIG)
 # Create MUSIC_DIRECTORY if it does not exists
 ensure_folder(MUSIC_DIRECTORY)
@@ -68,7 +67,7 @@ def update(playlist: dict):
 
     local_songs = [os.path.join(playlist_folder, video)
                    for video in os.listdir(playlist_folder)]
-    global_songs = fetch_songs(playlist["id"], DEVELOPER_KEY)
+    global_songs = fetch_songs(playlist["videos"])
 
     local_song_IDs = {get_video_id(song) for song in local_songs}
     global_song_IDs = {video['id'] for video in global_songs}
@@ -101,7 +100,7 @@ def update(playlist: dict):
 
 
 def main():
-    playlists = fetch_playlist(PLAYLISTS, DEVELOPER_KEY)
+    playlists = fetch_playlist(PLAYLISTS)
 
     ensure_sync_file(SYNC_FILE)
     sync_prev = fetch_sync_file(SYNC_FILE)
@@ -123,7 +122,7 @@ def main():
             else:
                 print(
                     "The playlist '%s' has not been previously synced. Syncing..." % playlist["title"])
-            videos = fetch_songs(playlist["id"], DEVELOPER_KEY)
+            videos = fetch_songs(playlist["videos"])
             # To start from where it crashed instead of starting over in case of a interuption.
             sync_prev[playlist["id"]] = {
                 "lastUpdated": datetime.now().strftime("%d-%m-%YT%H:%M:%S")}
