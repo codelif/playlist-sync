@@ -30,7 +30,7 @@ def validate_config(path:str):
     buffer.read(path)
     
     config = {}
-    
+    playlists = [] 
     p = {}
     try:
         playlists = list(buffer.items('playlists'))
