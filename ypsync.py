@@ -134,7 +134,7 @@ def main():
 
     try:
         hotreload_mpd(get_client())
-    except ConnectionRefusedError:
+    except ConnectionRefusedError, KeyError:
         pass
 
     return 0
