@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from src.utils import *
 from src.fetch import fetch_playlist, fetch_songs
 from src.downloader import downloader
-from src.config import validate_config, get_playlists
+from src.config import validate_config
 from src.mpd_hot_reload import get_client, hotreload_mpd
 from datetime import datetime
 import argparse
@@ -50,8 +50,7 @@ CONFIG_FILE = os.path.join(CONFIG_DIRECTORY, "config.ini")
 SYNC_FILE = os.path.join(CONFIG_DIRECTORY, "sync_status.json")
 ensure_folder(CONFIG_DIRECTORY)
 # Config Extraction
-CONFIG = validate_config(CONFIG_FILE)
-PLAYLISTS = get_playlists(CONFIG)
+PLAYLISTS = validate_config(CONFIG_FILE)
 # Create MUSIC_DIRECTORY if it does not exists
 ensure_folder(MUSIC_DIRECTORY)
 

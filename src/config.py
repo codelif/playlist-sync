@@ -18,7 +18,78 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 
-from configparser import ConfigParser, DuplicateOptionError, NoOptionError, NoSectionError
+
+class Parser:
+    
+    def __init__(self, config_file:str, comment_char:str='#') -> None:
+        """Parse config files
+
+        Args:
+            config_file (str): Config file path
+            comment_char (str, optional): Comment character to ignore. Defaults to '#'.
+        """        
+        self.COMMENT_TOKEN = comment_char
+
+        with open(config_file) as f:
+            raw_config = f.read()
+        self.raw_config_lines = self.__split_lines_and_whitespace(raw_config)
+        
+
+    def __split_lines_and_whitespace(self, string) -> list[str]:
+        rc_lines = []
+        for i in string.splitlines():
+            if i:
+                rc_lines.append(i)
+        return rc_lines
+    
+
+    def get_sections(self) -> dict[str, tuple]:
+        sections = {}
+
+        cur_section = ['', -1]
+        for i,line in enumerate(self.raw_config_lines):
+            line = self.__remove_comments(line)
+            if line.startswith('[') and line.endswith(']'):
+
+                if cur_section[0]:
+                    entries = self.raw_config_lines[cur_section[1]+1:i]
+                    sections.update({cur_section[0]: self.__parse_entries(entries)})
+                
+                cur_section = [line.strip("[]"), i]
+
+            is_last_line = i+1 == len(self.raw_config_lines)
+            if is_last_line and cur_section[0]:
+                entries = self.raw_config_lines[cur_section[1]+1:i+1]
+                sections.update({cur_section[0]: self.__parse_entries(entries)})
+        
+        return sections
+
+
+    def __parse_entries(self, entries: list[str]) -> tuple[dict, list]:
+
+        assignments = {}
+        flags = []
+        for line in entries:
+            if line.startswith(self.COMMENT_TOKEN):
+                continue
+            
+            splited = self.__remove_comments(line).split('=')
+                    
+            if len(splited) == 1:
+                flags.append(splited[0])
+            elif len(splited) == 2:
+                assignments.update({splited[0]: splited[1]})
+            else:
+                pass #invalid format
+
+        return (assignments, flags)
+
+    def __remove_comments(self, line:str) -> str:
+        for i,v in enumerate(line):
+            if v == self.COMMENT_TOKEN:
+                line = line[:i]
+
+        return line.strip()
 
 
 class InvalidPlaylist(Exception): pass
@@ -26,53 +97,23 @@ class NoPlaylists(Exception): pass
 
 
 def validate_config(path:str):
-    buffer = ConfigParser()
-    buffer.read(path)
-    
-    config = {}
-    playlists = [] 
-    p = {}
-    try:
-        playlists = list(buffer.items('playlists'))
-    except DuplicateOptionError:
-        print("ERROR: Check config.ini file for duplicate options in the playlists section. For more info: Read the DOCS on how to setup ypsync.")
-        exit()
-    except NoSectionError:
-        print("ERROR: Playlists section has not been setup properly. For more info: Read the DOCS on how to setup ypsync.")
+    buffer = Parser(path).get_sections()
     
     try:
+        playlists = buffer["playlists"][1]
         if not playlists:
             raise NoPlaylists("No playlists in config.ini")
-        for playlist in playlists:
-            index = int(playlist[0].split('-')[-1])
-            play_id = playlist[1]
-            p.update({index:play_id})
-        if len(set(p.values())) != len(p.values()):
-            print("WARN: Some of the playlists in config.ini are duplicates. Please ensure there are no duplicates.")
-            oldp = p
-            p = {}
-            for i,v in oldp.items():
-                if v not in list(p.values()):
-                    p.update({i:v})
-            
-            
-        config.update({"playlists":p})
-    except ValueError:
-        print("ERROR: Check if you have properly setup playlists. Playlists should be in format 'playlist-{index} = {playlist-id}'. For more info: Read the DOCS on how to setup ypsync..")
-        exit()
-    except InvalidPlaylist:
-        print("ERROR: One of the playlists in config.ini is invalid. Please ensure that you have entered a valid 34-character Youtube Playlist. For more info: Read the DOCS on how to setup ypsync..")
-        exit()
+    except KeyError:
+        print("ERROR: Playlists section has not been setup properly. For more info: Read the DOCS on how to setup ypsync.")
+        exit(1)        
     except NoPlaylists:
         print("No Playlists in config.ini. Please add a playlist ID in config.ini to start. For more info: Read the DOCS on how to setup ypsync..")
-        exit()
+        exit(1)
     
     
-    return config
+    return playlists
 
 
-def get_playlists(config:dict):
-    return list(config["playlists"].values())
 
 
 
