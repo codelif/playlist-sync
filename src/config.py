@@ -100,7 +100,7 @@ def validate_config(path:str):
     buffer = Parser(path).get_sections()
     
     try:
-        playlists = buffer["playlists"][1]
+        playlists = list(set(buffer["playlists"][1]))
         if not playlists:
             raise NoPlaylists("No playlists in config.ini")
     except KeyError:
