@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-
+import sys
 
 class Parser:
 
@@ -147,9 +147,9 @@ def validate_config(path: str) -> list[str]:
             raise NoPlaylists("No playlists in config.ini")
     except KeyError:
         print("ERROR: Playlists section has not been setup properly. For more info: Read the DOCS on how to setup ypsync.")
-        exit(1)
+        sys.exit(1)
     except NoPlaylists:
         print("No Playlists in config.ini. Please add a playlist ID in config.ini to start. For more info: Read the DOCS on how to setup ypsync..")
-        exit(1)
+        sys.exit(1)
 
     return playlists
